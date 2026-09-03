@@ -5,12 +5,23 @@ Earn **Quickdraw**, **YOLO**, **Pair Extraordinaire**, **Pull Shark x4**, **Gala
 
 ### Option 1: Easiest - No Code (Recommended)
 
+**⚠️ One-time Settings (Required - 30 sec):**
+
+Before first run, enable these in YOUR FORK:
+
+**A. Enable Discussions (for Galaxy Brain):**
+`Your Fork` -> `Settings` -> `General` -> `Features` -> ✅ Check `Discussions` -> Save
+
+**B. Allow Actions to create PRs (fixes `createPullRequest` error):**
+`Your Fork` -> `Settings` -> `Actions` -> `General` -> Scroll to `Workflow permissions` -> ✅ Check `Allow GitHub Actions to create and approve pull requests` -> `Save`
+
+Then run:
+
 1. **Fork** this repo (click `Fork` top-right)
-2. Go to your fork -> `Settings` -> `General` -> `Features` -> ✅ Enable `Discussions` (for Galaxy Brain)
-3. Go to `Actions` tab -> `I understand my workflows, go ahead and enable them`
-4. Click workflow `Earn GitHub Badges (1-Click) - 6 Badges` -> `Run workflow` -> `Run workflow`
-5. Wait 2-3 mins for ✅ green check
-6. Done! Check `https://github.com/YOUR_USERNAME?tab=achievements` (takes ~30 mins)
+2. Go to `Actions` tab in your fork -> `I understand my workflows, go ahead and enable them`
+3. Click workflow `Earn GitHub Badges (1-Click) - 6 Badges` -> `Run workflow` -> `Run workflow`
+4. Wait 2-3 mins for ✅ green check
+5. Done! Check `https://github.com/YOUR_USERNAME?tab=achievements` (takes ~30 mins)
 
 > No install needed! Uses `GITHUB_TOKEN` automatically. Rate-safe: delays + own fork = no flag.
 
@@ -52,6 +63,20 @@ bash scripts/earn-badges.sh
 - ✅ Real commits, real PRs, own fork only
 - ✅ Run once per fork
 - ❌ Never fake stars (Starstruck) - that's what gets flagged
+
+### Troubleshooting
+
+**Error: `GitHub Actions is not permitted to create or approve pull requests (createPullRequest)`**
+Fix: `Settings` -> `Actions` -> `General` -> `Workflow permissions` -> ✅ `Allow GitHub Actions to create and approve pull requests` -> `Save` -> Re-run workflow. This is OFF by default in all forks.
+
+**Error: `Galaxy Brain` skipped / `has_discussions: false`**
+Fix: `Settings` -> `General` -> `Features` -> ✅ `Discussions` -> Save. Re-run workflow. Or ignore - you still get 5 badges without it.
+
+**Error: `Workflow not showing`**
+Fix: `Actions` tab -> `I understand my workflows, go ahead and enable them`
+
+**Badges not showing after run?**
+Wait 30-60 mins, hard refresh `https://github.com/YOUR_USERNAME?tab=achievements`. GitHub is slow. Re-run once if needed (branches use `--force` so safe to re-run).
 
 ### Manual Fallback
 
