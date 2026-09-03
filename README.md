@@ -1,4 +1,4 @@
-# badge-test 🏆
+# earn-github-badges 🏆
 Fastest way to earn 4 GitHub Achievements - 1 Click!
 
 Earn **Quickdraw**, **YOLO**, **Pair Extraordinaire**, **Pull Shark** in under 2 minutes.
@@ -17,8 +17,8 @@ Earn **Quickdraw**, **YOLO**, **Pair Extraordinaire**, **Pull Shark** in under 2
 
 ```bash
 # 1. Fork this repo on GitHub, then:
-git clone https://github.com/YOUR_USERNAME/badge-test.git
-cd badge-test
+git clone https://github.com/YOUR_USERNAME/earn-github-badges.git
+cd earn-github-badges
 
 # 2. Login to GitHub CLI (only first time)
 gh auth login
