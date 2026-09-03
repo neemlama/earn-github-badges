@@ -1,0 +1,75 @@
+name: Earn GitHub Badges (1-Click)
+
+on:
+  workflow_dispatch:
+  # allow anyone who forks to click "Run workflow" button
+
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+jobs:
+  earn-badges:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "${{ github.actor }}"
+          git config user.email "${{ github.actor }}@users.noreply.github.com"
+
+      - name: 1. Quickdraw - Create and close issue in <5 mins
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Creating Quickdraw issue..."
+          ISSUE_URL=$(gh issue create --title "Quickdraw badge" --body "Closing immediately for Quickdraw badge" --repo ${{ github.repository }})
+          echo "Created: $ISSUE_URL"
+          ISSUE_NUMBER=$(echo $ISSUE_URL | rev | cut -d'/' -f1 | rev)
+          gh issue close $ISSUE_NUMBER --repo ${{ github.repository }} --reason "completed"
+          echo "✅ Quickdraw done - issue #$ISSUE_NUMBER closed within seconds"
+
+      - name: 2. Pair Extraordinaire + YOLO - Branch v1 with co-authored commit
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git checkout -B badge-v1
+          echo "Hello badge v1 - $(date)" > badge-v1.txt
+          git add badge-v1.txt
+          # This Co-authored-by line triggers Pair Extraordinaire
+          git commit -m "Add badge v1
+
+          Co-authored-by: Contrib <contrib@users.noreply.github.com>"
+          git push -u origin badge-v1 --force
+          gh pr create --title "Badge PR 1 - YOLO & Pair Extraordinaire" --body "This PR gives YOLO (merge without review) + Pair Extraordinaire (co-authored commit)" --base main --head badge-v1 --repo ${{ github.repository }}
+          echo "Waiting for PR..."
+          sleep 5
+          gh pr merge badge-v1 --merge --admin --repo ${{ github.repository }}
+          echo "✅ YOLO + Pair Extraordinaire done - PR merged without review"
+
+      - name: 3. Pull Shark - Branch v2 (2nd merged PR)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git checkout main
+          git pull origin main
+          git checkout -B badge-v2
+          echo "Hello badge v2 - $(date)" > badge-v2.txt
+          git add badge-v2.txt
+          git commit -m "Add badge v2"
+          git push -u origin badge-v2 --force
+          gh pr create --title "Badge PR 2 - Pull Shark" --body "2nd merged PR triggers Pull Shark" --base main --head badge-v2 --repo ${{ github.repository }}
+          sleep 5
+          gh pr merge badge-v2 --merge --admin --repo ${{ github.repository }}
+          echo "✅ Pull Shark done - 2 PRs merged"
+
+      - name: Done
+        run: |
+          echo "🎉 All badges earned!"
+          echo "Check https://github.com/${{ github.actor }}?tab=achievements in 30 mins"
+          echo "Badges: Quickdraw, YOLO, Pair Extraordinaire, Pull Shark"
