@@ -36,7 +36,7 @@ Co-authored-by: Contrib <contrib@users.noreply.github.com>"
 git push -u origin badge-v1 --force
 gh pr create --title "Badge PR 1 - YOLO & Pair Extraordinaire" --body "YOLO + Pair Extraordinaire" --base main --head badge-v1
 Start-Sleep -Seconds 7
-gh pr merge badge-v1 --merge --admin --delete-branch=false
+gh pr merge badge-v1 --merge --admin --delete-branch
 Write-Host "✅ YOLO + Pair Extraordinaire done" -ForegroundColor Green
 Start-Sleep -Seconds 5
 
@@ -52,8 +52,8 @@ for ($i=2; $i -le 4; $i++) {
     git push -u origin "badge-v$i" --force
     gh pr create --title "Badge PR $i - Pull Shark" --body "$i PR for Pull Shark" --base main --head "badge-v$i"
     Start-Sleep -Seconds 7
-    gh pr merge "badge-v$i" --merge --admin --delete-branch=false
-    Write-Host "✅ Pull Shark PR $i done" -ForegroundColor Green
+    gh pr merge "badge-v$i" --merge --admin --delete-branch
+    Write-Host "✅ Pull Shark PR $i done (branch auto-deleted)" -ForegroundColor Green
     Start-Sleep -Seconds 5
 }
 

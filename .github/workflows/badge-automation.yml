@@ -48,7 +48,7 @@ jobs:
           git push -u origin badge-v1 --force
           gh pr create --title "Badge PR 1 - YOLO & Pair Extraordinaire" --body "YOLO + Pair Extraordinaire" --base main --head badge-v1 --repo ${{ github.repository }}
           sleep 7
-          gh pr merge badge-v1 --merge --admin --repo ${{ github.repository }}
+          gh pr merge badge-v1 --merge --admin --delete-branch --repo ${{ github.repository }}
           echo "✅ YOLO + Pair Extraordinaire done"
           sleep 5
 
@@ -65,7 +65,7 @@ jobs:
           git push -u origin badge-v2 --force
           gh pr create --title "Badge PR 2 - Pull Shark" --body "2nd PR for Pull Shark" --base main --head badge-v2 --repo ${{ github.repository }}
           sleep 7
-          gh pr merge badge-v2 --merge --admin --repo ${{ github.repository }}
+          gh pr merge badge-v2 --merge --admin --delete-branch --repo ${{ github.repository }}
           echo "✅ Pull Shark 2/4 done"
           sleep 5
 
@@ -82,7 +82,7 @@ jobs:
           git push -u origin badge-v3 --force
           gh pr create --title "Badge PR 3 - Pull Shark" --body "3rd PR for Pull Shark" --base main --head badge-v3 --repo ${{ github.repository }}
           sleep 7
-          gh pr merge badge-v3 --merge --admin --repo ${{ github.repository }}
+          gh pr merge badge-v3 --merge --admin --delete-branch --repo ${{ github.repository }}
           echo "✅ Pull Shark 3/4 done"
           sleep 5
 
@@ -99,7 +99,7 @@ jobs:
           git push -u origin badge-v4 --force
           gh pr create --title "Badge PR 4 - Pull Shark" --body "4th PR for Pull Shark" --base main --head badge-v4 --repo ${{ github.repository }}
           sleep 7
-          gh pr merge badge-v4 --merge --admin --repo ${{ github.repository }}
+          gh pr merge badge-v4 --merge --admin --delete-branch --repo ${{ github.repository }}
           echo "✅ Pull Shark 4/4 done - Levels earned"
           sleep 5
 
@@ -140,6 +140,20 @@ jobs:
             sleep 5
           done
           echo "✅ Galaxy Brain done - 2 discussions answered"
+
+      - name: Cleanup - Delete old demo branches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+        run: |
+          git checkout main
+          for branch in v1 v2; do
+            if git ls-remote --heads origin $branch | grep -q $branch; then
+              echo "Deleting old branch $branch..."
+              git push origin --delete $branch || true
+            fi
+          done
+          echo "Cleanup done - branches now auto-deleted via --delete-branch"
 
       - name: Done
         run: |
