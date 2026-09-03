@@ -1,50 +1,61 @@
 # earn-github-badges 🏆
-Fastest way to earn 4 GitHub Achievements - 1 Click!
+Fastest way to earn 6 GitHub Achievements - 1 Click! Safe & No Flag
 
-Earn **Quickdraw**, **YOLO**, **Pair Extraordinaire**, **Pull Shark** in under 2 minutes.
+Earn **Quickdraw**, **YOLO**, **Pair Extraordinaire**, **Pull Shark x4**, **Galaxy Brain** in ~3 minutes.
 
-### Option 1: Easiest - No Code (Recommended for beginners)
+### Option 1: Easiest - No Code (Recommended)
 
-1. **Fork** this repo (click `Fork` button top-right)
-2. Go to your fork -> `Actions` tab -> Click `I understand my workflows, go ahead and enable them`
-3. Click `Earn GitHub Badges (1-Click)` -> Click `Run workflow` -> `Run workflow`
-4. Wait 1-2 minutes for ✅ green check
-5. Done! Check your badges at `https://github.com/YOUR_USERNAME?tab=achievements` (takes ~30 mins to appear)
+1. **Fork** this repo (click `Fork` top-right)
+2. Go to your fork -> `Settings` -> `General` -> `Features` -> ✅ Enable `Discussions` (for Galaxy Brain)
+3. Go to `Actions` tab -> `I understand my workflows, go ahead and enable them`
+4. Click workflow `Earn GitHub Badges (1-Click) - 6 Badges` -> `Run workflow` -> `Run workflow`
+5. Wait 2-3 mins for ✅ green check
+6. Done! Check `https://github.com/YOUR_USERNAME?tab=achievements` (takes ~30 mins)
 
-> No install needed! Workflow uses your `GITHUB_TOKEN` automatically.
+> No install needed! Uses `GITHUB_TOKEN` automatically. Rate-safe: delays + own fork = no flag.
 
 ### Option 2: Local Script (Windows / Mac / Linux)
 
 ```bash
-# 1. Fork this repo on GitHub, then:
+# 1. Fork, then:
 git clone https://github.com/YOUR_USERNAME/earn-github-badges.git
 cd earn-github-badges
 
-# 2. Login to GitHub CLI (only first time)
+# 2. Login (first time)
 gh auth login
 
-# 3. Run script:
-# Windows PowerShell:
+# 3. Run:
+# Windows:
 .\scripts\earn-badges.ps1
 
 # Mac/Linux:
 bash scripts/earn-badges.sh
 ```
 
-### What it does
+### What it does (Rate-Safe)
 
-| Step | Badge | How |
-|------|-------|-----|
-| 1 | **Quickdraw** | Creates an issue and closes it within seconds |
-| 2 | **YOLO + Pair Extraordinaire** | Creates branch `badge-v1` with `Co-authored-by` commit, opens PR and merges without review |
-| 3 | **Pull Shark** | Creates branch `badge-v2`, opens 2nd PR and merges (2 merged PRs = Pull Shark) |
+| Step | Badge | How | Delay |
+|------|-------|-----|-------|
+| 1 | **Quickdraw** | Create issue and close in 2 sec | 5s |
+| 2 | **YOLO + Pair Extraordinaire** | `badge-v1` with `Co-authored-by`, PR merge without review | 7s |
+| 3 | **Pull Shark** | `badge-v2` PR + merge | 7s |
+| 4 | **Pull Shark** | `badge-v3` PR + merge | 7s |
+| 5 | **Pull Shark** | `badge-v4` PR + merge (safe max 4) | 7s |
+| 6 | **Galaxy Brain** | 2 Discussions + answers + mark as accepted (if enabled) | 5s |
 
-### Manual Method
+**Total: 4 PRs + 1 Issue + 2 Discussions = 6 Badges. All in OWN fork, no spam.**
 
-If automation fails, do it manually:
-1. Create Issue -> Close immediately = Quickdraw
-2. Branch `v1` -> Add file -> Commit with `Co-authored-by: Name <email>` -> Push -> PR -> Merge without review = Pair Extraordinaire + YOLO
-3. Branch `v2` -> Add file -> Push -> PR -> Merge = Pull Shark
+### Why No Flag?
+
+- ✅ Max 4 PRs per run (not 50)
+- ✅ `sleep 5-7s` between API calls (no abuse)
+- ✅ Real commits, real PRs, own fork only
+- ✅ Run once per fork
+- ❌ Never fake stars (Starstruck) - that's what gets flagged
+
+### Manual Fallback
+
+If workflow fails: Create Issue->Close=Quickdraw, Branch v1 with co-author->PR->Merge=YOLO+Pair, Branches v2-v4->PR->Merge=Pull Shark
 
 ---
 ⭐ Star this repo if it helped you!

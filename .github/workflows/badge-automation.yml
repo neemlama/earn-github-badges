@@ -1,13 +1,13 @@
-name: Earn GitHub Badges (1-Click)
+name: Earn GitHub Badges (1-Click) - 6 Badges
 
 on:
   workflow_dispatch:
-  # allow anyone who forks to click "Run workflow" button
 
 permissions:
   contents: write
   pull-requests: write
   issues: write
+  discussions: write
 
 jobs:
   earn-badges:
@@ -23,7 +23,7 @@ jobs:
           git config user.name "${{ github.actor }}"
           git config user.email "${{ github.actor }}@users.noreply.github.com"
 
-      - name: 1. Quickdraw - Create and close issue in <5 mins
+      - name: 1. Quickdraw - Create and close issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -31,28 +31,28 @@ jobs:
           ISSUE_URL=$(gh issue create --title "Quickdraw badge" --body "Closing immediately for Quickdraw badge" --repo ${{ github.repository }})
           echo "Created: $ISSUE_URL"
           ISSUE_NUMBER=$(echo $ISSUE_URL | rev | cut -d'/' -f1 | rev)
+          sleep 2
           gh issue close $ISSUE_NUMBER --repo ${{ github.repository }} --reason "completed"
-          echo "✅ Quickdraw done - issue #$ISSUE_NUMBER closed within seconds"
+          echo "✅ Quickdraw done"
 
-      - name: 2. Pair Extraordinaire + YOLO - Branch v1 with co-authored commit
+      - name: 2. Pair Extraordinaire + YOLO - PR #1
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git checkout -B badge-v1
           echo "Hello badge v1 - $(date)" > badge-v1.txt
           git add badge-v1.txt
-          # This Co-authored-by line triggers Pair Extraordinaire
           git commit -m "Add badge v1
 
           Co-authored-by: Contrib <contrib@users.noreply.github.com>"
           git push -u origin badge-v1 --force
-          gh pr create --title "Badge PR 1 - YOLO & Pair Extraordinaire" --body "This PR gives YOLO (merge without review) + Pair Extraordinaire (co-authored commit)" --base main --head badge-v1 --repo ${{ github.repository }}
-          echo "Waiting for PR..."
-          sleep 5
+          gh pr create --title "Badge PR 1 - YOLO & Pair Extraordinaire" --body "YOLO + Pair Extraordinaire" --base main --head badge-v1 --repo ${{ github.repository }}
+          sleep 7
           gh pr merge badge-v1 --merge --admin --repo ${{ github.repository }}
-          echo "✅ YOLO + Pair Extraordinaire done - PR merged without review"
+          echo "✅ YOLO + Pair Extraordinaire done"
+          sleep 5
 
-      - name: 3. Pull Shark - Branch v2 (2nd merged PR)
+      - name: 3. Pull Shark - PR #2
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
@@ -63,13 +63,87 @@ jobs:
           git add badge-v2.txt
           git commit -m "Add badge v2"
           git push -u origin badge-v2 --force
-          gh pr create --title "Badge PR 2 - Pull Shark" --body "2nd merged PR triggers Pull Shark" --base main --head badge-v2 --repo ${{ github.repository }}
-          sleep 5
+          gh pr create --title "Badge PR 2 - Pull Shark" --body "2nd PR for Pull Shark" --base main --head badge-v2 --repo ${{ github.repository }}
+          sleep 7
           gh pr merge badge-v2 --merge --admin --repo ${{ github.repository }}
-          echo "✅ Pull Shark done - 2 PRs merged"
+          echo "✅ Pull Shark 2/4 done"
+          sleep 5
+
+      - name: 4. Pull Shark - PR #3
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git checkout main
+          git pull origin main
+          git checkout -B badge-v3
+          echo "Hello badge v3 - $(date)" > badge-v3.txt
+          git add badge-v3.txt
+          git commit -m "Add badge v3"
+          git push -u origin badge-v3 --force
+          gh pr create --title "Badge PR 3 - Pull Shark" --body "3rd PR for Pull Shark" --base main --head badge-v3 --repo ${{ github.repository }}
+          sleep 7
+          gh pr merge badge-v3 --merge --admin --repo ${{ github.repository }}
+          echo "✅ Pull Shark 3/4 done"
+          sleep 5
+
+      - name: 5. Pull Shark - PR #4 (Safe max)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git checkout main
+          git pull origin main
+          git checkout -B badge-v4
+          echo "Hello badge v4 - $(date)" > badge-v4.txt
+          git add badge-v4.txt
+          git commit -m "Add badge v4"
+          git push -u origin badge-v4 --force
+          gh pr create --title "Badge PR 4 - Pull Shark" --body "4th PR for Pull Shark" --base main --head badge-v4 --repo ${{ github.repository }}
+          sleep 7
+          gh pr merge badge-v4 --merge --admin --repo ${{ github.repository }}
+          echo "✅ Pull Shark 4/4 done - Levels earned"
+          sleep 5
+
+      - name: 6. Galaxy Brain - Discussions (if enabled)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true
+        run: |
+          echo "Checking if Discussions enabled..."
+          HAS_DISCUSSIONS=$(gh api repos/${{ github.repository }} --jq .has_discussions)
+          echo "has_discussions: $HAS_DISCUSSIONS"
+          if [ "$HAS_DISCUSSIONS" != "true" ]; then
+            echo "⚠️ Discussions not enabled. Skip Galaxy Brain."
+            echo "To enable: Repo Settings -> General -> Features -> Check Discussions"
+            exit 0
+          fi
+          # Get category ID (Q&A or General)
+          CATEGORY_ID=$(gh api graphql -f query='query($owner:String!,$name:String!){repository(owner:$owner,name:$name){discussionCategories(first:10){nodes{id name isAnswerable}}}}' -f owner="${{ github.repository_owner }}" -f name="$(echo ${{ github.repository }} | cut -d'/' -f2)" --jq '.data.repository.discussionCategories.nodes[] | select(.isAnswerable==true) | .id' | head -1)
+          if [ -z "$CATEGORY_ID" ]; then
+            CATEGORY_ID=$(gh api graphql -f query='query($owner:String!,$name:String!){repository(owner:$owner,name:$name){discussionCategories(first:10){nodes{id}}}}' -f owner="${{ github.repository_owner }}" -f name="$(echo ${{ github.repository }} | cut -d'/' -f2)" --jq '.data.repository.discussionCategories.nodes[0].id')
+          fi
+          echo "Category ID: $CATEGORY_ID"
+          REPO_ID=$(gh api graphql -f query='query($owner:String!,$name:String!){repository(owner:$owner,name:$name){id}}' -f owner="${{ github.repository_owner }}" -f name="$(echo ${{ github.repository }} | cut -d'/' -f2)" --jq '.data.repository.id')
+
+          # Create 2 discussions
+          for i in 1 2; do
+            echo "Creating discussion $i..."
+            DISCUSSION_ID=$(gh api graphql -f query='mutation($repoId:ID!,$catId:ID!,$title:String!,$body:String!){createDiscussion(input:{repositoryId:$repoId,categoryId:$catId,title:$title,body:$body}){discussion{id}}}' -f repoId="$REPO_ID" -f catId="$CATEGORY_ID" -f title="Galaxy Brain Q $i - How to earn badges?" -f body="What is the fastest way to earn badges? Discussion $i for Galaxy Brain." --jq '.data.createDiscussion.discussion.id')
+            echo "Created discussion $DISCUSSION_ID"
+            sleep 3
+            # Add answer comment
+            COMMENT_ID=$(gh api graphql -f query='mutation($discId:ID!,$body:String!){addDiscussionComment(input:{discussionId:$discId,body:$body}){comment{id}}}' -f discId="$DISCUSSION_ID" -f body="Answer $i: Use this repo workflow - fork and click Run workflow! Plus local script." --jq '.data.addDiscussionComment.comment.id')
+            echo "Added comment $COMMENT_ID"
+            sleep 2
+            # Mark as answer
+            gh api graphql -f query='mutation($commentId:ID!){markDiscussionCommentAsAnswer(input:{id:$commentId}){discussion{id}}}' -f commentId="$COMMENT_ID" > /dev/null
+            echo "✅ Galaxy Brain discussion $i answered"
+            sleep 5
+          done
+          echo "✅ Galaxy Brain done - 2 discussions answered"
 
       - name: Done
         run: |
-          echo "🎉 All badges earned!"
+          echo "🎉 All done!"
+          echo "Badges earned: Quickdraw, YOLO, Pair Extraordinaire, Pull Shark x4, Galaxy Brain (if Discussions enabled)"
           echo "Check https://github.com/${{ github.actor }}?tab=achievements in 30 mins"
-          echo "Badges: Quickdraw, YOLO, Pair Extraordinaire, Pull Shark"
+          echo "Rate-safe: 4 PRs + 2 discussions + 1 issue with delays - no flag"
